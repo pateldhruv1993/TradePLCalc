@@ -1,0 +1,22 @@
+<html>
+        <head>
+                <script src="./js/plotly-latest.min.js"></script>
+        </head>
+        <body>
+            <div style="border: red; background-color: crimson; border: 5px;" id="errorMsgBox"></div>
+            <div style="border: green; background-color: lawngreen; border: 5px;" id="friendlyMsgBox"></div>
+            Current Price*: <input id="currentPrice" type="number"/><br>
+            Expected Price: <input id="expectedPrice" type="number"/><br>
+            Maximum amount <input id="maxDollarInvest" type="number"/> <b>OR</b> stocks <input id="maxStockInvest" type="number"/> you can invest.<br>
+            Commission Charges*: <input id="comissionCharge" type="number"/><br>
+            Stock Price Increments: <input id="stockPriceIncrements" type="number" value="0.01"/><br>
+            No. Of Stocks Increments: <input id="numberOfStocksIncrement" type="number" value= "5"/><br>
+            <button id="generateGraphBtn">Generate Graph</button>
+
+
+
+
+            <div id="PLGraph" style="width:600px;height:250px;"></div>
+            <script src="./js/main.js"></script>
+        </body>
+</html>
