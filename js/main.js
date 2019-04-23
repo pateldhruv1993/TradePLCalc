@@ -7,23 +7,76 @@ var maxNumberOfStocksListLength = 20;
 
 //Init all the important variables in global scope
 var currentPrice, expectedPrice, maxDollarInvest, maxStockInvest, comissionCharge, stockPriceIncrements, numberOfStocksIncrement;
-var stockPriceList = [], numberOfStocksList = [];
+var stockPriceList = [], numberOfStocksList = [], totalInvestmentList = [], profitPercentageMatrix = [], profitMatrix = [];
 
 document.getElementById("generateGraphBtn").addEventListener("click", function(){
-
-    
+    //TODO: The validation part aint working for shit
     getFormValues();
     generateStockPriceList();
     generateNumOfStocksList();
-
+    //TODO: The profit and profit percentage matrices don't consider comission charges into account.
+    generateAllMatrix();
+    generatePlot();
 });
 
-
-// Fill numberOfStocksList will all the possible stock num values
-function generateNumOfStocksList(){
-    
+//Create Plot
+function generatePlot(){
+    var data = [
+        {
+          z: profitPercentageMatrix,
+          x: numberOfStocksList,
+          y: stockPriceList,
+          type: 'heatmap'
+        }
+      ];
+      
+      Plotly.newPlot('PLGraph', data, {}, {showSendToCloud: true});
 }
 
+// Create Matrix
+function generateAllMatrix(){
+    stockPriceList.forEach(function(stockPrice, index){
+        var profitPercentageList = [];
+        var profitList = [];
+        numberOfStocksList.forEach(function(numOfStocks, index){
+            var profit = (numOfStocks * stockPrice) - totalInvestmentList[index];
+            profitPercentageList.push(((profit / totalInvestmentList[index]) * 100).toFixed(2));
+            profitList.push(profit.toFixed(2));
+        });
+
+        profitPercentageMatrix.push(profitPercentageList);
+        profitMatrix.push(profitList);
+    });
+}
+
+
+//TODO: Runtime error. Producces list of up to 63 item when it should stop at ~20
+// Fill numberOfStocksList with all the possible stock num values
+function generateNumOfStocksList(){
+    var maxStockBuyable;
+    if(!isNaN(maxDollarInvest)){
+        maxStockBuyable = parseInt((maxDollarInvest - comissionCharge) / currentPrice);
+    }
+    else{
+        maxStockBuyable = parseInt(maxStockInvest);
+    }
+
+    
+    for(var i = 0; i <= 9; i++){
+        numOfStocks = parseInt((maxStockBuyable + (i * numberOfStocksIncrement)));
+        numberOfStocksList.push(numOfStocks);
+        totalInvestmentList.push(numOfStocks * currentPrice);
+    }
+
+    for(i = 0; i <= 10; i++){
+        numOfStocks = parseInt(maxStockBuyable - (i * numberOfStocksIncrement));
+        numberOfStocksList.unshift(numOfStocks);
+        totalInvestmentList.unshift(numOfStocks * currentPrice);
+    }
+
+}
+
+//TODO: Runtime error. Produces exteremly long list sometimes. E.g.: when current price was set to 11 and expected price was set to 13 it also produced about 100 itesm below 11 when it shuoldve stopped much sooner. Also fix the numbers to 2 digits after decimle
 // Fill stockPriceList with all the price values
 function generateStockPriceList(){
     var upperLimit, lowerLimit;
@@ -91,7 +144,7 @@ function getFormValues() {
     }
     
     comissionCharge = parseFloat(document.getElementById("comissionCharge").value);
-    if(comissionCharge == "undefined" || comissionCharge == ""){
+    if(comissionCharge == "undefined" || comissionCharge == "" || isNaN(comissionCharge)){
         comissionCharge = 0;
         showMainFriendlyMsg("Commission Charge field was left empty so the charge is set to $0");
     }
