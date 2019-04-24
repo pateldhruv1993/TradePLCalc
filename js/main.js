@@ -21,12 +21,19 @@ document.getElementById("generateGraphBtn").addEventListener("click", function()
 
 //Create Plot
 function generatePlot(){
+
+    var minProfitPercentage = Math.min(profitPercentageMatrix[0]);
+    var maxProfitPercentage = Math.max(profitPercentageMatrix[profitPercentageMatrix.length-1]);
+    var centerProfitPercentage =  0 - minProfitPercentage / (maxProfitPercentage - minProfitPercentage);
     var data = [
         {
           z: profitPercentageMatrix,
           x: numberOfStocksList,
           y: stockPriceList,
-          type: 'heatmap'
+          type: 'heatmap',
+          colorscale: [[0, 'rgba(214, 39, 40, 0.85)'],   
+                    [centerProfitPercentage, 'rgba(255, 255, 255, 0.85)'],  
+                    [1, 'rgba(6,54,21, 0.85)']],
         }
       ];
       
