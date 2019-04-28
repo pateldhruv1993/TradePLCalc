@@ -1,3 +1,6 @@
+//TODO: Label profit percentage on the hover tooltip on the graph instead of z. Also change name for x and y on the saem tooltip
+//TODO: Find a way to add profit numbers on that tooltip. should have something saved in the research tabs
+//TODO: Expected Price field fucks up lot of the shit. Can probably fix most problems if you fix how stock price list array is calcualted when expected price is given
 // Config
 var maxStockPriceListLength = 100;
 var maxNumberOfStocksListLength = 20;
@@ -10,20 +13,20 @@ var currentPrice, expectedPrice, maxDollarInvest, maxStockInvest, comissionCharg
 var stockPriceList = [], numberOfStocksList = [], totalInvestmentList = [], profitPercentageMatrix = [], profitMatrix = [];
 
 document.getElementById("generateGraphBtn").addEventListener("click", function(){
-    //TODO: The validation part aint working for shit
-    getFormValues();
-    generateStockPriceList();
-    generateNumOfStocksList();
-    //TODO: The profit and profit percentage matrices don't consider comission charges into account.
-    generateAllMatrix();
-    generatePlot();
+    if(getFormValues()){
+        generateStockPriceList();
+        generateNumOfStocksList();
+        //TODO: The profit and profit percentage matrices don't consider comission charges into account.
+        generateAllMatrix();
+        generatePlot();
+    }
 });
 
 //Create Plot
 function generatePlot(){
 
-    var minProfitPercentage = Math.min(profitPercentageMatrix[0]);
-    var maxProfitPercentage = Math.max(profitPercentageMatrix[profitPercentageMatrix.length-1]);
+    var minProfitPercentage = Math.min.apply(null, profitPercentageMatrix[0]);
+    var maxProfitPercentage = Math.max.apply(null, profitPercentageMatrix[profitPercentageMatrix.length-1]);
     var centerProfitPercentage =  0 - minProfitPercentage / (maxProfitPercentage - minProfitPercentage);
     var data = [
         {
@@ -33,7 +36,7 @@ function generatePlot(){
           type: 'heatmap',
           colorscale: [[0, 'rgba(214, 39, 40, 0.85)'],   
                     [centerProfitPercentage, 'rgba(255, 255, 255, 0.85)'],  
-                    [1, 'rgba(6,54,21, 0.85)']],
+                    [1, 'rgba(16, 255, 0, 0.85)']],
         }
       ];
       
@@ -83,7 +86,7 @@ function generateNumOfStocksList(){
 
 }
 
-//TODO: Runtime error. Produces exteremly long list sometimes. E.g.: when current price was set to 11 and expected price was set to 13 it also produced about 100 itesm below 11 when it shuoldve stopped much sooner. Also fix the numbers to 2 digits after decimle
+//TODO: Runtime error. Produces exteremly long list sometimes. E.g.: when current price was set to 11 and expected price was set to 13 it also produced about 100 itesm below 11 when it shuoldve stopped much sooner.
 // Fill stockPriceList with all the price values
 function generateStockPriceList(){
     var upperLimit, lowerLimit;
@@ -113,7 +116,7 @@ function generateStockPriceList(){
             break
         }
         lastItemAdded = lowerLimit + (multiplierCount * stockPriceIncrements);
-        stockPriceList.push(lastItemAdded);
+        stockPriceList.push(lastItemAdded.toFixed(2));
         multiplierCount++;
     }
 
@@ -132,20 +135,20 @@ function findUpperLowerLimits(targetUpperLimit){
 //Gets all the values from the form
 function getFormValues() {
     currentPrice = parseFloat(document.getElementById("currentPrice").value);
-    if(currentPrice == "undefined" || currentPrice == ""){
+    if(currentPrice == "undefined" || currentPrice == "" || isNaN(currentPrice)){
         showMainError("Current Price is required");
         return false;
     }
 
     expectedPrice = parseFloat(document.getElementById("expectedPrice").value);
-    if(expectedPrice == "undefined" || expectedPrice == ""){
+    if(expectedPrice == "undefined" || expectedPrice == "" || isNaN(expectedPrice)){
         expectedPrice = undefined;
     }
     
     maxDollarInvest = parseFloat(document.getElementById("maxDollarInvest").value);
     maxStockInvest = parseFloat(document.getElementById("maxStockInvest").value);
     
-    if((maxDollarInvest == "undefined" || maxDollarInvest == "") && (maxStockInvest == "undefined" || maxStockInvest == "")){
+    if((maxDollarInvest == "undefined" || maxDollarInvest == "" || isNaN(maxDollarInvest)) && (maxStockInvest == "undefined" || isNaN(maxStockInvest) || maxStockInvest == "")){
         showMainError("Fill out either the Maximum dollar or Maximum stock amount");
         return false;
     }
@@ -157,18 +160,18 @@ function getFormValues() {
     }
 
     stockPriceIncrements = parseFloat(document.getElementById("stockPriceIncrements").value);
-    if(stockPriceIncrements == "undefined" || stockPriceIncrements == ""){
+    if(stockPriceIncrements == "undefined" || stockPriceIncrements == "" || isNaN(stockPriceIncrements)){
         showMainError("Stock Price Increments is required");
         return false;
     }
 
     numberOfStocksIncrement = parseFloat(document.getElementById("numberOfStocksIncrement").value);
-    if(numberOfStocksIncrement == "undefined" || numberOfStocksIncrement == ""){
+    if(numberOfStocksIncrement == "undefined" || numberOfStocksIncrement == "" || isNaN(numberOfStocksIncrement)){
         showMainError("No. of Stocks Increments is required");
         return false;
     }
+    return true;
 }
-
 
 
 
