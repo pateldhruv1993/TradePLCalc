@@ -86,7 +86,7 @@ function generatePlot() {
             [centerProfitPercentage, 'rgba(255, 255, 255, 0.85)'],
             [1, 'rgba(16, 255, 0, 0.85)']],
         },
-        
+        profitLine,
         currentPriceLine,
         maxStockLine
     ];

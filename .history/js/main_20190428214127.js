@@ -50,29 +50,28 @@ function generatePlot() {
 
     var currentPriceLine = {
         type: 'scatter',
-        x: [numberOfStocksList[0], numberOfStocksList[numberOfStocksList.length - 1]],
-        y: [currentPrice, currentPrice],
+        x: [0.5, 10],
+        y: [0, 0],
         mode: 'lines',
         name: 'Current Price Line',
         showlegend: true,
         line: {
-            color: 'blue',
-            width: 1,
+            color: 'grey',
+            width: 2,
             dash: 'dash'
         }
     };
 
     var maxStockLine = {
         type: 'scatter',
-        x: [maxStockInvest, maxStockInvest],
-        y: [stockPriceList[0], stockPriceList[stockPriceList.length - 1]],
+        x: [0.5, 10],
+        y: [0, 0],
         mode: 'lines',
         name: 'Max Stock',
         showlegend: true,
         line: {
-            color: 'blue',
-            width: 1,
-            dash: 'dash'
+            color: 'grey',
+            width: 2
         }
     };
 
@@ -86,7 +85,7 @@ function generatePlot() {
             [centerProfitPercentage, 'rgba(255, 255, 255, 0.85)'],
             [1, 'rgba(16, 255, 0, 0.85)']],
         },
-        
+        profitLine,
         currentPriceLine,
         maxStockLine
     ];
@@ -117,7 +116,6 @@ function generateNumOfStocksList() {
     var maxStockBuyable;
     if (!isNaN(maxDollarInvest)) {
         maxStockBuyable = parseInt((maxDollarInvest - comissionCharge) / currentPrice);
-        maxStockInvest = maxStockBuyable;
     }
     else {
         maxStockBuyable = parseInt(maxStockInvest);
